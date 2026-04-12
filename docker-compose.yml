@@ -1,0 +1,31 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: padel
+      POSTGRES_USER: padel
+      POSTGRES_PASSWORD: padel
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U padel"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  activity_tracker:
+    build:
+      context: .                                  # project root — Dockerfile can COPY shared/
+      dockerfile: bots/activity_tracker/Dockerfile
+    env_file: .env
+    environment:
+      DB_URL: postgresql+asyncpg://padel:padel@db/padel
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
