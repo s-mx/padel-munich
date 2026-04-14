@@ -15,6 +15,11 @@ venv/
 dist/
 build/
 
+# Test artifacts
+.pytest_cache/
+.coverage
+htmlcov/
+
 # Database
 *.db
 *.sqlite3
