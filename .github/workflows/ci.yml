@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: padel
+          POSTGRES_PASSWORD: padel
+          POSTGRES_DB: padel
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          pip install -r bots/activity_tracker/requirements.txt \
+                      -r requirements-test.txt
+
+      - name: Create test database
+        run: |
+          PGPASSWORD=padel psql -h localhost -U padel -c "CREATE DATABASE padel_test;"
+
+      - name: Lint
+        run: ruff check .
+
+      - name: Test
+        env:
+          BOT_TOKEN: test
+          DB_URL: postgresql+asyncpg://padel:padel@localhost:5432/padel_test
+        run: pytest
