@@ -24,7 +24,6 @@ test data stay correct no matter when the suite runs.
 
 from datetime import datetime, timedelta, timezone
 
-import pytest
 from sqlalchemy import select
 
 from shared.db.models import Member

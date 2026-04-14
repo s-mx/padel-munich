@@ -102,24 +102,7 @@ docker compose exec db psql -U padel -c "SELECT * FROM members ORDER BY last_see
 
 ## Initial Member Scan (one-time)
 
-Run this **once** after adding the bot to the group to seed all existing members:
-
-```bash
-# 1. Get API_ID + API_HASH from https://my.telegram.org (takes 2 min)
-# 2. Fill API_ID, API_HASH, CHAT_ID in .env
-# 3. Make sure DB is running:
-docker compose up -d db
-
-# 4. Install script deps (separate venv recommended):
-pip install -r scripts/requirements.txt
-
-# 5. Run the scan (will prompt for phone + OTP on first run):
-python -m scripts.seed_members
-```
-
-Existing members are inserted with the current timestamp as `last_seen_at`.
-If a member is already in the DB their record is left untouched.
-The Pyrogram session file (`seed_session.session`) is gitignored — keep it safe.
+See [scripts/README.md](scripts/README.md).
 
 ## Production Hosting (Railway)
 
@@ -141,33 +124,10 @@ Each new bot = new Railway service in the same project, pointing at the same Pos
 
 Commands are silently ignored for non-admin users.
 
+## Linting
+
+See [CONTRIBUTING.md](CONTRIBUTING.md).
+
 ## Testing
 
-See `tests/README.md` for full details. Quick reference:
-
-```bash
-# One-time setup (creates padel_test DB and venv)
-docker compose up -d db
-docker compose exec db psql -U padel -c "CREATE DATABASE padel_test;"
-python3.12 -m venv .venv && source .venv/bin/activate
-pip install -r bots/activity_tracker/requirements.txt -r requirements-test.txt
-
-# Run all 56 tests
-BOT_TOKEN=test pytest
-
-# Run only handler unit tests (no Postgres needed)
-BOT_TOKEN=test pytest tests/test_activity_tracker_*.py -v
-```
-
-Test files follow the `test_<bot_name>_<module>.py` convention so tests for
-different bots stay unambiguous in a flat layout.  Shared DB logic lives in
-`test_shared_repository.py`.
-
-## Planned / Future
-
-- Alembic migrations
-- FastAPI read-only admin REST API
-- Inactive member DM nudge
-- Weekly activity digest posted to the group
-- Match scheduler bot
-- Poll/voting bot
+See [CONTRIBUTING.md](CONTRIBUTING.md).

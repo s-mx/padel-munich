@@ -23,7 +23,6 @@ No database is used.
 
 from unittest.mock import AsyncMock, patch
 
-import pytest
 from aiogram.enums import ChatMemberStatus
 
 from bots.activity_tracker.handlers.members import on_member_join

@@ -36,7 +36,6 @@ loads the Settings singleton at import time.
 from datetime import datetime, timezone
 from unittest.mock import AsyncMock, MagicMock, patch
 
-import pytest
 
 from bots.activity_tracker.handlers.admin import cmd_inactive, cmd_stats, cmd_top
 from shared.db.models import Member
